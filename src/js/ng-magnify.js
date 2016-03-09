@@ -26,9 +26,9 @@
           el, nWidth, nHeight, magnifyCSS;
 
         // if touch devices, do something
-        if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
-          return;
-        }
+        //~ if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+          //~ return;
+        //~ }
         element.on('mousemove', function (evt) {
           el = angular.extend(scope.getOffset(element[0]), {
             width: element[0].offsetWidth,
