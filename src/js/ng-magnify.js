@@ -26,9 +26,35 @@
           el, nWidth, nHeight, magnifyCSS;
 
         // if touch devices, do something
-        //~ if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
-          //~ return;
-        //~ }
+         if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+            element.on( "touchstart", function(evt){
+              evt.preventDefault();
+            })
+            .on('touchmove', function(evt) {
+              evt.preventDefault();      
+              el = angular.extend(scope.getOffset(element[0]), {
+              width: element[0].offsetWidth,
+              height: element[0].offsetHeight,
+              imageWidth: image[0].offsetWidth,
+              imageHeight: image[0].offsetHeight,
+              glassWidth: glass[0].offsetWidth,
+              glassHeight: glass[0].offsetHeight
+            });
+            magnifyCSS = scope.magnify(evt);
+
+              if (magnifyCSS) {
+                glass.css( magnifyCSS );
+              }
+            })
+            .on('touchend', function () {
+            glass.on('touchend', function () {
+              glass.css({
+                opacity: 0,
+                filter: 'alpha(opacity=0)'
+              });
+            });
+          });
+         }
         element.on('mousemove', function (evt) {
           el = angular.extend(scope.getOffset(element[0]), {
             width: element[0].offsetWidth,
@@ -64,9 +90,9 @@
             };
             img.src = scope.imageSrc;
           } else {
-            // IE8 uses evt.x and evt.y
-            mx = (evt.pageX) ? (evt.pageX - el.left) : evt.x;
-            my = (evt.pageY) ? (evt.pageY - el.top) : evt.y;
+              // IE8 uses evt.x and evt.y
+              mx = (evt.pageX) ? (evt.pageX - el.left) : (evt.touches[0] && evt.touches[0].pageX) ? (evt.touches[0].pageX - el.left) : evt.x;
+              my = (evt.pageY) ? (evt.pageY - el.top) : (evt.touches[0] && evt.touches[0].pageY) ? (evt.touches[0].pageY - el.top) : evt.y;
 
             if (mx < el.width && my < el.height && mx > 0 && my > 0) {
               glass.css({
@@ -89,8 +115,7 @@
 
             px = mx - el.glassWidth/2;
             py = my - el.glassHeight/2;
-
-            return { left: px+'px', top: py+'px', backgroundPosition: bgp };
+              return { left: px+'px', top: py+'px', backgroundPosition: bgp };
           }
           return;
         };
